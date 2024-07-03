@@ -108,4 +108,29 @@ def backward_prop(x, y, parameters, forward_cache):
     
     return gradients
 
+def update_parameters(parameters, gradients, learning_rate):
+    
+    w1 = parameters['w1']
+    b1 = parameters['b1']
+    w2 = parameters['w2']
+    b2 = parameters['b2']
+    
+    dw1 = gradients['dw1']
+    db1 = gradients['db1']
+    dw2 = gradients['dw2']
+    db2 = gradients['db2']
+    
+    w1 = w1 - learning_rate*dw1
+    b1 = b1 - learning_rate*db1
+    w2 = w2 - learning_rate*dw2
+    b2 = b2 - learning_rate*db2
+    
+    parameters = {
+        "w1" : w1,
+        "b1" : b1,
+        "w2" : w2,
+        "b2" : b2
+    }
+    
+    return parameters
 
