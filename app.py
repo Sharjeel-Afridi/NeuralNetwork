@@ -13,24 +13,24 @@ Y_test = np.loadtxt('./test_label.csv', delimiter = ',').T
 # print("shape of X_test :", X_test.shape)
 # print("shape of Y_test :", Y_test.shape)
 
-index = random.randrange(0, X_train.shape[1])
-plt.imshow(X_train[:, index].reshape(28, 28), cmap = 'gray')
-plt.show()
+# index = random.randrange(0, X_train.shape[1])
+# plt.imshow(X_train[:, index].reshape(28, 28), cmap = 'gray')
+# plt.show()
 
 def tanh(x):
     return np.tanh(x)
 
 def relu(x):
-    return max(x, 0)
+    return np.maximum(x, 0)
 
 def softmax(x):
     expX = np.exp(x)
-    return expX/np.sum(expX)
+    return expX/np.sum(expX, axis = 0)
 
 def derivative_tanh(x):
-    return (1 - np.power(x,2))
+    return (1 - np.power(np.tanh(x),2))
 
-def deriavtive_relu(x):
+def derivative_relu(x):
     return np.array(x > 0, dtype = np.float32)
 
 def initialize_parameters(n_x, n_h,n_y):
@@ -48,7 +48,7 @@ def initialize_parameters(n_x, n_h,n_y):
     }
     return parameters
 
-def forward_propogation(x, parameters):
+def forward_propagation(x, parameters):
 
     w1 = parameters["w1"]
     b1 = parameters["b1"]
@@ -56,7 +56,7 @@ def forward_propogation(x, parameters):
     b2 = parameters["b2"]
 
     z1 = np.dot(w1, x) + b1
-    a1 = relu(z1)
+    a1 = tanh(z1)
 
     z2 = np.dot(w2, a1) + b2
     a2 = softmax(z2)
@@ -159,3 +159,8 @@ def model(x,y,n_h,learning_rate,iterations):
             print("Cost after", i, "iterations is :", cost)
         
     return parameters, cost_list
+
+Parameters, Cost_list = model(X_train, Y_train,n_h = 1000, learning_rate = 0.002, iterations = 100)
+t = np.arange(0, 100)
+plt.plot(t, Cost_list)
+plt.show()
