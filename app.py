@@ -134,3 +134,28 @@ def update_parameters(parameters, gradients, learning_rate):
     
     return parameters
 
+def model(x,y,n_h,learning_rate,iterations):
+
+    n_x = x.shape[0]
+    n_y = y.shape[0]
+    
+    cost_list = []
+    
+    parameters = initialize_parameters(n_x, n_h, n_y)
+    
+    for i in range(iterations):
+        
+        forward_cache = forward_propagation(x, parameters)
+        
+        cost = cost_function(forward_cache['a2'], y)
+        
+        gradients = backward_prop(x, y, parameters, forward_cache)
+        
+        parameters = update_parameters(parameters, gradients, learning_rate)
+        
+        cost_list.append(cost)
+        
+        if(i%(iterations/10) == 0):
+            print("Cost after", i, "iterations is :", cost)
+        
+    return parameters, cost_list
