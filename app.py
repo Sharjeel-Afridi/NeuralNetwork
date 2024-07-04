@@ -56,7 +56,7 @@ def forward_propagation(x, parameters):
     b2 = parameters["b2"]
 
     z1 = np.dot(w1, x) + b1
-    a1 = tanh(z1)
+    a1 = relu(z1) # activation function in hidden layer
 
     z2 = np.dot(w2, a1) + b2
     a2 = softmax(z2)
@@ -95,7 +95,7 @@ def backward_prop(x, y, parameters, forward_cache):
     dw2 = (1/m)*np.dot(dz2, a1.T)
     db2 = (1/m)*np.sum(dz2, axis = 1, keepdims = True)
     
-    dz1 = (1/m)*np.dot(w2.T, dz2)*derivative_tanh(a1)
+    dz1 = (1/m)*np.dot(w2.T, dz2)*derivative_relu(a1) # change this to derivative relu for relu
     dw1 = (1/m)*np.dot(dz1, x.T)
     db1 = (1/m)*np.sum(dz1, axis = 1, keepdims = True)
     
@@ -155,12 +155,39 @@ def model(x,y,n_h,learning_rate,iterations):
         
         cost_list.append(cost)
         
-        if(i%(iterations/10) == 0):
-            print("Cost after", i, "iterations is :", cost)
+        # if(i%(iterations/10) == 0):
+        #     print("Cost after", i, "iterations is :", cost)
         
     return parameters, cost_list
 
 Parameters, Cost_list = model(X_train, Y_train,n_h = 1000, learning_rate = 0.002, iterations = 100)
-t = np.arange(0, 100)
-plt.plot(t, Cost_list)
+
+# t = np.arange(0, 100)
+# plt.plot(t, Cost_list)
+# plt.show()
+
+# accuracy can be incresed by increasing iterations
+def accuracy(inp, labels, parameters):
+    forward_cache = forward_propagation(inp, parameters)
+    a_out = forward_cache['a2']   # containes propabilities with shape(10, 1)
+    
+    a_out = np.argmax(a_out, 0)  # 0 represents row wise 
+    
+    labels = np.argmax(labels, 0)
+    
+    acc = np.mean(a_out == labels)*100
+    
+    return acc
+
+# print("Accuracy of Train Dataset", accuracy(X_train, Y_train, Parameters), "%")
+# print("Accuracy of Test Dataset", round(accuracy(X_test, Y_test, Parameters), 2), "%")
+
+idx = int(random.randrange(0,X_test.shape[1]))
+plt.imshow(X_test[:, idx].reshape((28,28)),cmap='gray')
 plt.show()
+
+cache = forward_propagation(X_test[:, idx].reshape(X_test[:, idx].shape[0], 1), Parameters)
+a_pred = cache['a2']  
+a_pred = np.argmax(a_pred, 0)
+
+print("Our model says it is :", a_pred[0])
